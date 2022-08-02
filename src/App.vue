@@ -1,14 +1,20 @@
 <template>
-  <div>
-    <img src="./assets/logo.png">
+  <el-container>
+    <el-header>
+    <header-nav></header-nav>
+    </el-header>
     <router-view></router-view>
-  </div>
+  </el-container>
 </template>
 
 <script>
+import HeaderNav from '@/components/HeaderNav.vue';
 
 export default {
-  name: 'App'
+  name: 'App',
+  components:{
+    HeaderNav
+  }
 }
 </script>
 
@@ -19,6 +25,10 @@ export default {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
-  margin-top: 60px;
+}
+
+.header-nav {
+  margin-top: 0;
+  padding-top: 0;
 }
 </style>

@@ -1,6 +1,6 @@
 <template>
     <div>
-        <el-page-header class="page-header" :content="'团队管理界面:'+ teamInfo.name" title="返回" @back="goBack"/>
+        <el-page-header class="page-header" :content="'团队管理界面:'+ " title="返回" @back="goBack"/>
         <team-header teamName="你好"></team-header>
         <el-tabs
             type="card"

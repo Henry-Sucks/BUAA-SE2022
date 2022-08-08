@@ -27,3 +27,17 @@ export class User implements IUser{
     userUrl= ''
     userPassWord = ''
 }
+
+export interface IGroup {
+    groupId: number,
+    groupName: String,
+    groupInf: String,
+    groupIcon: String
+}
+
+export class Group implements IGroup{
+    groupId= 0;
+    groupName= '';
+    groupInf= '';
+    groupIcon= '';
+}

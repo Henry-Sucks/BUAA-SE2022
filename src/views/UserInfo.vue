@@ -82,6 +82,7 @@ const ruleFormRef = ref<FormInstance>()
 let userForm = reactive(store.state.loginOptions.userInfo)
 
 
+
 const rules = reactive<FormRules>({
     email:[
         { required: true, message: '请输入邮箱', trigger: 'blur' },

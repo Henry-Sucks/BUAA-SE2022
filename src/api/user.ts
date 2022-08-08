@@ -25,9 +25,7 @@ export async function addUser(data: any){
         method: 'POST',
         url: '/user/addUser',
         params:{
-            userName: data.userName,
-            Email: data.Email,
-            passWord: data.passWord
+            data
         }
     })
 }

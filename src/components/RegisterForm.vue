@@ -36,6 +36,8 @@ import { getCurrentInstance } from 'vue';
 // 获取类型接口
 import {IUser, User} from '../store/interface'
 
+import {useRouter} from 'vue-router'
+
 // 更新全局数据
 import {useStore} from 'vuex'
 const store = useStore()
@@ -46,7 +48,7 @@ const store = useStore()
 const { proxy } = getCurrentInstance()
 
 
-
+const router = useRouter()
 const formSize = ref('large')
 const ruleFormRef = ref<FormInstance>()
 
@@ -74,10 +76,10 @@ const submitForm = async (formEl: FormInstance | undefined) => {
     if (!formEl) return
     let flag = false
     let uid: number
-    await formEl.validate((valid, fields) => {
+    await formEl.validate(async (valid, fields) => {
         if (valid) {
           // 判断是否已经注册？
-          proxy.$api.user.findEmail(ruleForm.email).then((res) => {
+          await proxy.$api.user.findEmail(ruleForm.email).then((res) => {
             console.log(res.data)
             if(res.data.result == true){
               alert('此用户已注册！')
@@ -86,7 +88,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             })
           if(flag) return
           
-          proxy.$api.user.findName(ruleForm.userName).then((res) => {
+          await proxy.$api.user.findName(ruleForm.userName).then((res) => {
             console.log(res.data)
             if(res.data.result == true){
               alert('此用户名已被使用！')
@@ -101,18 +103,31 @@ const submitForm = async (formEl: FormInstance | undefined) => {
             Email: ruleForm.email,
             passWord: ruleForm.password
           }
-          proxy.$api.user.addUser(params).then((res) => {
+          await proxy.$api.user.addUser(params).then((res) => {
             console.log(res.data)
             uid = res.data.Data
           })
         
           // 更新全局数据中的userInfo
           let userInfo = new User()
+          console.log('uid', uid)
           userInfo.userId = uid
           userInfo.userEmail = ruleForm.email
           userInfo.userName =ruleForm.userName
-          store.commit('loginOptions/setUserInfo', userInfo)
-          store.commit('loginOptions/setLoggedIn')
+          userInfo.userIcon = '@/assets/userDefault.png'
+          userInfo.userPassWord = ruleForm.password
+
+          proxy.$api.user.updateUser(userInfo).then((res) => {
+            console.log(res.data)
+            if(res.data.result == true){
+              store.commit('loginOptions/setUserInfo', userInfo)
+              store.commit('loginOptions/setLoggedIn')
+              router.push({
+                name: 'HomePage'
+              })
+            }
+            })
+          
           // 利用router跳转到主页
         } else {
         console.log('error submit!', fields)

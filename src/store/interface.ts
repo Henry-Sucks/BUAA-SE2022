@@ -10,7 +10,8 @@ export interface IUser {
     userUnit: String,
     userBirthday: String,
     userLocation: String,
-    userUrl: String
+    userUrl: String,
+    userPassWord: String
 }
 
 export class User implements IUser{
@@ -21,7 +22,8 @@ export class User implements IUser{
     userRealName= '';
     userCareer= '';
     userUnit= '';
-    userBirthday= '';
+    userBirthday= '2000-01-01';
     userLocation= ''
     userUrl= ''
+    userPassWord = ''
 }

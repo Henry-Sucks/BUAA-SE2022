@@ -2,12 +2,12 @@
 <div class="userInfo">
     <el-row>
     <el-col :span="4">
-        <img :src="userForm.avatar">
+        <img :src="require('../assets/' + userForm.userIcon)">
     </el-col>
     <div class="topper">
     <el-col :span="4" >
     <el-row>
-        <span class="fakeName">{{userForm.fakeName}}</span>
+        <span class="fakeName">{{userForm.userName}}</span>
     </el-row>
     </el-col>
     </div>
@@ -16,7 +16,7 @@
       label-width="120px" 
       jusitfy="center" 
       class="form" 
-      :disabled="isSelf"
+      :disabled="!isSelf"
       :model="userForm"
       :rules="rules"
       ref="ruleFormRef"
@@ -62,43 +62,47 @@
     </el-form-item>
   </el-form>
   </div>
+
 </template>
 
 <script lang="ts" setup>
-import userDefault from '../assets/userDefault.png'
-
-import {reactive, ref, defineProps} from 'vue'
+import {reactive, ref, defineProps, getCurrentInstance} from 'vue'
 import type { FormInstance, FormRules } from 'element-plus'
-
-
-import {IUser, User} from '../store/interface'
 import {useStore} from 'vuex'
+import {IUser, User} from '../store/interface'
+
 
 const store = useStore()
+const {proxy} = getCurrentInstance()
 // 判断是否是本人?
-const isSelf = ref(false)
+const isSelf = ref(true)
 
 const ruleFormRef = ref<FormInstance>()
-let userForm = reactive(store.state.loginOptions.userInfo)
-
+console.log(store.state.loginOptions.userInfo)
+let userForm = reactive(new User())
+userForm = store.state.loginOptions.userInfo
 
 
 const rules = reactive<FormRules>({
-    email:[
-        { required: true, message: '请输入邮箱', trigger: 'blur' },
+    // email:[
+    //     { required: true, message: '请输入邮箱', trigger: 'blur' },
        
-    ],
-    fakeName: [
-        { required: true, message: '请输入用户名', trigger: 'blur' },
-    ],
+    // ],
+    // fakeName: [
+    //     { required: true, message: '请输入用户名', trigger: 'blur' },
+    // ],
 })
 
 const submitForm = async (formEl: FormInstance | undefined) => {
+    console.log(userForm)
     if (!formEl) return
     await formEl.validate((valid, fields) => {
         if (valid) {
-          // 在这里把东西发出去
-        console.log('submit!')
+          proxy.$api.user.updateUser(userForm).then(
+              (res) => {
+                console.log(res.data.result)
+              }
+          )
         } else {
         console.log('error submit!', fields)
         }

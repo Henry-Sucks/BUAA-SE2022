@@ -1,3 +1,4 @@
+import { User } from "@/store/interface"
 import request from "./request"
 
 export async function findEmail(email:string){
@@ -25,7 +26,9 @@ export async function addUser(data: any){
         method: 'POST',
         url: '/user/addUser',
         params:{
-            data
+            userName: data.userName,
+            Email: data.Email,
+            passWord: data.PassWord
         }
     })
 }
@@ -37,6 +40,26 @@ export async function loginByEmail(data: any){
         params:{
             userEmail: data.userEmail,
             passWord: data.passWord
+        }
+    })
+}
+
+export async function updateUser(data: User){
+    return request({
+        method: 'POST',
+        url: '/user/update',
+        params:{
+            userId : data.userId, 
+            userName : data.userName, 
+            userEmail : data.userEmail,
+            userPassWord : data.userPassWord,
+            userIcon : data.userIcon, 
+            userRealName : data.userRealName,
+            userCareer : data.userCareer, 
+            userUnit : data.userUnit,
+            userBirthday : data.userBirthday,
+            userLocation : data.userLocation,
+            userUrl : data.userUrl,
         }
     })
 }

@@ -51,6 +51,10 @@
     >
     <team-config></team-config>
     </el-dialog> -->
+
+    <el-dialog>
+        
+    </el-dialog>
 </template>
 
 <script lang="ts" setup>
@@ -60,7 +64,7 @@ import {useRouter} from 'vue-router'
 
 // 所有数据
 const datas = [
-            {tid: 1, name:'1', role: 0},{tid: 2, name:'1', role: 1}
+            {tid: 1, name:'1', role: 0},{tid: 2, name:'1', role: 1},{tid: 2, name:'1', role: 1},{tid: 2, name:'1', role: 1},{tid: 2, name:'1', role: 1},{tid: 2, name:'1', role: 1}
           ]
 
 // 分页功能

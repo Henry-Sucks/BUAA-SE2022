@@ -39,7 +39,7 @@
     <el-menu-item @click="userSelected">
         个人主页
     </el-menu-item>
-    <el-menu-item>
+    <el-menu-item @click="logOut">
         <span style="color:#D61428; font-weight:bolder;">退出登录</span>
     </el-menu-item>
 </el-sub-menu> 
@@ -48,6 +48,7 @@
 </template>
 
 <script lang="ts" setup>
+import { User } from '@/store/interface';
 import {ref, reactive} from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import {useStore} from 'vuex'
@@ -87,6 +88,14 @@ function projectManage(){
     router.push({
     name:'ProjectManage',
 })
+}
+
+function logOut(){
+    store.commit('loginOptions/setUserInfo', new User)
+    store.commit('loginOptions/setLoggedOut')
+    router.push({
+        name: 'HomeView'
+    })
 }
 
 </script>

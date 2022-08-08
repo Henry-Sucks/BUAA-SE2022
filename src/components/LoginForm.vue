@@ -97,6 +97,9 @@ const submitForm = async (formEl: FormInstance | undefined) => {
 
           store.commit('loginOptions/setUserInfo', userInfo)
           store.commit('loginOptions/setLoggedIn')
+          router.push({
+                name: 'HomePage'
+              })
         } else {
         console.log('error submit!', fields)
         }

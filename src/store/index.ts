@@ -2,6 +2,7 @@ import { dateTableProps } from 'element-plus/lib/components/calendar/src/date-ta
 import { createStore } from 'vuex';
 
 import {IUser, User} from './interface'
+import VuexPersistence from 'vuex-persist'
 
 const loginOptions = {
   namespaced: true,
@@ -61,10 +62,16 @@ const projectOptions ={
     }
 }
 
+const vuexLocal = new VuexPersistence({
+    storage: window.localStorage
+})
+
 export default createStore({
-  modules:{
+  strict: false,
+    modules:{
       loginOptions,
       teamOptions,
       projectOptions
-  }
+  },
+  plugins: [vuexLocal.plugin]
 })

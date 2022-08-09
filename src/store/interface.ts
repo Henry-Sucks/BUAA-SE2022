@@ -41,3 +41,15 @@ export class Group implements IGroup{
     groupInf= '';
     groupIcon= '';
 }
+
+export interface IMember {
+    userId: Number,
+    groupId: Number,
+    userJob: String
+}
+
+export class Member implements IMember{
+    userId = 0;
+    groupId = 0;
+    userJob = '';
+}

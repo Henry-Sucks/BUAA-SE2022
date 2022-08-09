@@ -21,11 +21,11 @@
       <el-main>
         <el-row class="main">
             <el-col 
-            v-for="data in paginatedData"
-            :key="data.tid" 
+            v-for="data in filteredData"
+            :key="data.groupId" 
             :data="data"
             :span="4">
-            <team-card class="page-item" @click="enterTeam(data.tid)"  :team="data"></team-card>
+            <team-card class="page-item" @click="enterTeam(data.groupId)"  :team="data"></team-card>
             </el-col>
         </el-row>
       </el-main>
@@ -62,19 +62,45 @@
 
 <script lang="ts" setup>
 import TeamCard from '../../components/TeamCard.vue'
-import {reactive, ref, computed, getCurrentInstance} from 'vue'
+import {reactive, ref, computed, getCurrentInstance, toRefs, onMounted} from 'vue'
 import {useRouter} from 'vue-router'
-import { Group } from '@/store/interface';
+import { Group, IGroup } from '@/store/interface';
 import {useStore} from 'vuex'
 
 const store = useStore()
 const {proxy} = getCurrentInstance()
+
+
 // 队名输入框
 let teamNewName = ref('')
 
+// 控制队名输入框什么时候跳出
 let dialogVisible = ref(false)
 
-// 新增队伍
+
+// 所有组的数据
+// 注意：对象数组的响应式绑定
+let datas = reactive(
+  [] as IGroup[]
+)
+
+// 获取/刷新该组员参加的所有组 datas
+function refreshData(){
+  proxy.$api.team.findUserGroup(store.state.loginOptions.userInfo.userId).then((res) =>{
+    // 为了保持datas的双向绑定式，数组赋值时必须一个一个添加，这里调用copyArray函数
+    copyArray(res.data.data, datas)
+    console.log('总数据', datas)
+}
+)
+}
+
+onMounted(() => {
+  // mounted生命钩子：初始化
+    refreshData()
+})
+
+
+// 新增团队
 function createTeam(){
   if(teamNewName.value === ''){
       alert('队名不能为空！')
@@ -82,17 +108,22 @@ function createTeam(){
   }
   else{
     proxy.$api.team.createGroup({userId: store.state.loginOptions.userInfo.userId, name: teamNewName.value}).then((res) => {
-      console.log(res)
+      dialogVisible.value = false
+      refreshData()
     })
   }
     
-  
 }
 
-// 所有数据
-const datas = [
-            {tid: 1, name:'1', role: 0},{tid: 2, name:'1', role: 1},{tid: 2, name:'1', role: 1},{tid: 2, name:'1', role: 1},{tid: 2, name:'1', role: 1},{tid: 2, name:'1', role: 1}
-          ]
+// 复制数组
+function copyArray(sourceArray: any[], destinationArray: any[])
+{
+destinationArray.length = 0
+destinationArray.push(...sourceArray)
+}
+
+
+
 
 // 分页功能
 const perPage = ref(12)
@@ -119,17 +150,19 @@ let ifSinglePage = computed(() => {
 
 let paginatedData = computed(() => {
     let start = (curPage.value -1) * perPage.value, end = start + perPage.value
+    console.log('最终处理结果', filteredData.value.slice(start, end))
     return filteredData.value.slice(start, end)
 })
 
 let filteredData = computed(() => {
     if(searchInput.value !== '')
-        return datas.filter(data => data.name.includes(searchInput.value))
+        return datas.filter(data => data.groupName.includes(searchInput.value))
     else
         return datas
 })
 
 const router = useRouter()
+// 传参并进入teamPage
 function enterTeam(tid: number){
     router.push({
             name: 'TeamPage',

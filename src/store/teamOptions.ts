@@ -4,9 +4,13 @@ export default {
     actions:{
     },
     mutations:{
-
+      setTid(state: { tid: Number }, tid: Number){
+            if(state.tid == 0){
+                state.tid = tid
+            }
+        },
     },
     state:{
-          teamInfo: new Group
+          tid: 0
     }
   }

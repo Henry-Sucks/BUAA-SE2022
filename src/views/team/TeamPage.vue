@@ -1,16 +1,16 @@
 <template>
     <div>
-        <el-page-header class="page-header" :content="'团队管理界面:'" title="返回" @back="goBack"/>
-        <team-header></team-header>
+        <el-page-header class="page-header" :content="'团队管理界面'" title="返回" @back="goBack"/>
+        <team-header :team-name="teamInfo.groupName"></team-header>
         <el-tabs
             type="card"
             class="demo-tabs"
         >
             <el-tab-pane label="团队成员" name="first">
-                <member-table></member-table>
+                <member-table :tid="store.state.teamOptions.tid"></member-table>
             </el-tab-pane>
             <el-tab-pane label="团队项目" name="second">
-                <project-manage :tid="teamInfo.tid"></project-manage>
+                <project-manage :tid="store.state.teamOptions.tid"></project-manage>
             </el-tab-pane>
         </el-tabs>
     </div>
@@ -19,17 +19,25 @@
 import TeamHeader from '../../components/teams/TeamHeader.vue'
 import MemberTable from '../../components/teams/MemberTable.vue'
 import ProjectManage from '../projects/ProjectManage.vue'
-import {reactive} from "vue"
+import {reactive, getCurrentInstance, ref} from "vue"
 import { useRouter } from 'vue-router';
 import {useStore} from 'vuex'
 
 import {Group} from '../../store/interface'
 const router = useRouter()
 const store = useStore()
-
-// 得到该组的完整信息
-let teamInfo = reactive(new Group)
-teamInfo = store.state.teamOptions.teamInfo
+const {proxy} = getCurrentInstance()
+// 得到该组的tid后查询信息
+const tid = ref(router.currentRoute.value.params.tid)
+store.commit('teamOptions/setTid', tid)
+// group自身信息
+let teamInfo = ref(new Group())
+let groupId = ref(0)
+proxy.$api.team.getGroupById(tid.value).then((res) => {
+    teamInfo.value = res.data.data
+    groupId.value = res.data.data.groupId
+    console.log(teamInfo.value)
+})
 
 
 function goBack(){

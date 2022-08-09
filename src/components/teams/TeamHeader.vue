@@ -27,7 +27,7 @@ const props = defineProps({
     },
     teamName: String
 })
-
+console.log('Header', props.teamName)
 let editState = ref(false)
 function openEdit(){
     editState.value = true

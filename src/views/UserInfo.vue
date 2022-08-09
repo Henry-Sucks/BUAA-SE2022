@@ -44,6 +44,7 @@
           type="date"
           placeholder="Pick a date"
           style="width: 120px"
+          value-format="YYYY-MM-DD"
         />
     </el-form-item>
     <el-form-item label="个人网站">

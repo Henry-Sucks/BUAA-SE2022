@@ -45,7 +45,6 @@ export async function loginByEmail(data: any){
 }
 
 export async function updateUser(data: User){
-    console.log(data)
     return request({
         method: 'POST',
         url: '/user/update',
@@ -61,6 +60,16 @@ export async function updateUser(data: User){
             userBirthday : data.userBirthday,
             userLocation : data.userLocation,
             userUrl : data.userUrl,
+        }
+    })
+}
+
+export async function getUserInfById(userId: number){
+    return request({
+        method: 'GET',
+        url: '/user/findUserById',
+        params:{
+            userId
         }
     })
 }

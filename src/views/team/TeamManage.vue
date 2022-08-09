@@ -4,7 +4,7 @@
         <el-row>
           <el-col :span="7">
           <el-button 
-            color="#1F80B0" class="input new-button" round @click="createTeam"
+            color="#1F80B0" class="input new-button" round @click="dialogVisible = true"
           >
             新建团队
           </el-button>
@@ -45,22 +45,49 @@
       </el-footer>
     </el-container>
 
-    <!-- <el-dialog 
-        v-model="createState"
-        title="修改页面信息"
-    >
-    <team-config></team-config>
-    </el-dialog> -->
-
-    <el-dialog>
-        
+    <el-dialog
+      v-model="dialogVisible"
+      title="新建团队">
+      <el-input v-model="teamNewName" placeholder="请输入队名"></el-input>
+      <template #footer>
+      <span class="dialog-footer">
+        <el-button @click="dialogVisible = false">取消</el-button>
+        <el-button type="primary" @click="createTeam"
+          >确认</el-button
+        >
+      </span>
+    </template> 
     </el-dialog>
 </template>
 
 <script lang="ts" setup>
 import TeamCard from '../../components/TeamCard.vue'
-import {reactive, ref, computed} from 'vue'
+import {reactive, ref, computed, getCurrentInstance} from 'vue'
 import {useRouter} from 'vue-router'
+import { Group } from '@/store/interface';
+import {useStore} from 'vuex'
+
+const store = useStore()
+const {proxy} = getCurrentInstance()
+// 队名输入框
+let teamNewName = ref('')
+
+let dialogVisible = ref(false)
+
+// 新增队伍
+function createTeam(){
+  if(teamNewName.value === ''){
+      alert('队名不能为空！')
+      return
+  }
+  else{
+    proxy.$api.team.createGroup({userId: store.state.loginOptions.userInfo.userId, name: teamNewName.value}).then((res) => {
+      console.log(res)
+    })
+  }
+    
+  
+}
 
 // 所有数据
 const datas = [

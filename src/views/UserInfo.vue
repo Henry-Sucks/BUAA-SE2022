@@ -2,7 +2,7 @@
 <div class="userInfo">
     <el-row>
     <el-col :span="4">
-        <img :src="require('../assets/' + userForm.userIcon)">
+        <img src='../assets/userDefault.png'>
     </el-col>
     <div class="topper">
     <el-col :span="4" >
@@ -67,7 +67,7 @@
 
 <script lang="ts" setup>
 import {reactive, ref, defineProps, getCurrentInstance} from 'vue'
-import type { FormInstance, FormRules } from 'element-plus'
+import { FormInstance, FormRules, ElMessageBoxShortcutMethod, ElMessage } from 'element-plus'
 import {useStore} from 'vuex'
 import {IUser, User} from '../store/interface'
 
@@ -101,7 +101,14 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           proxy.$api.user.updateUser(userForm).then(
               (res) => {
                 console.log(res.data.result)
+                ElMessage({
+                    showClose: true,
+                    message: '成功修改信息！',
+                    type: 'success',
+                })
+                store.commit('loginOptions/setUserInfo', userForm)
               }
+              
           )
         } else {
         console.log('error submit!', fields)

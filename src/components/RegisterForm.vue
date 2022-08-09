@@ -105,7 +105,7 @@ const submitForm = async (formEl: FormInstance | undefined) => {
           }
           await proxy.$api.user.addUser(params).then((res) => {
             console.log(res.data)
-            uid = res.data.Data
+            uid = res.data.data
           })
         
           // 更新全局数据中的userInfo

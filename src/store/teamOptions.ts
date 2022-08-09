@@ -1,3 +1,4 @@
+import {IGroup, Group} from './interface'
 export default {
     namespaced: true,
     actions:{
@@ -6,12 +7,6 @@ export default {
 
     },
     state:{
-          // 记录当前查看组的基本信息
-          teamInfo: {
-              tid: 1,
-              userName: ''
-              // ......
-          }
-  
+          teamInfo: new Group
     }
   }

@@ -1,7 +1,7 @@
 <template>
     <el-row class="header">
         <el-button 
-        color="#1F80B0" :icon="Plus" round
+        color="#1F80B0" :icon="Plus" round @click="addUserToGroup"
         >
         邀请用户
         </el-button>

@@ -45,6 +45,7 @@ export async function loginByEmail(data: any){
 }
 
 export async function updateUser(data: User){
+    console.log(data)
     return request({
         method: 'POST',
         url: '/user/update',

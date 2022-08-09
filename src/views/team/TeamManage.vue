@@ -21,7 +21,7 @@
       <el-main>
         <el-row class="main">
             <el-col 
-            v-for="data in filteredData"
+            v-for="data in paginatedData"
             :key="data.groupId" 
             :data="data"
             :span="4">
@@ -131,16 +131,16 @@ const perPage = ref(12)
 const curPage = ref(1)
 // 搜索群组
 let searchInput = ref('')
-
+// 全部内容长度
 let totalItems = computed(() => {
     return datas.length;
 })
-
+// 全部页数
 let totalPages = computed(() => {
     console.log(totalPages)
     return datas.length / perPage.value;
 })
-
+// 是否只有一页？是则隐藏页数栏
 let ifSinglePage = computed(() => {
     if(totalPages.value > 1)
         return false;
@@ -148,18 +148,22 @@ let ifSinglePage = computed(() => {
         return true;
 })
 
-let paginatedData = computed(() => {
-    let start = (curPage.value -1) * perPage.value, end = start + perPage.value
-    console.log('最终处理结果', filteredData.value.slice(start, end))
-    return filteredData.value.slice(start, end)
-})
-
+// 根据搜索栏对内容进行过滤
 let filteredData = computed(() => {
     if(searchInput.value !== '')
         return datas.filter(data => data.groupName.includes(searchInput.value))
     else
         return datas
 })
+
+// 对过滤后的内容进行分页处理，最后展示的就是这个内容
+let paginatedData = computed(() => {
+    let start = (curPage.value -1) * perPage.value, end = start + perPage.value
+    console.log('最终处理结果', filteredData.value.slice(start, end))
+    return filteredData.value.slice(start, end)
+})
+
+
 
 const router = useRouter()
 // 传参并进入teamPage

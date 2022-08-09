@@ -6,24 +6,14 @@
           style="width: 170px; height: 100px; object-fit: cover"
         />
         <div class="middle" style="padding: 14px">
-          <span class="text" style="width: 120px">{{team.groupName}}</span>
-        </div>
-        <div class="bottom">
-            <img
-                :src="teamTag"
-                class="image"
-                style="width: 60px; object-fit: contain"
-            />
+          <span class="text" style="width: 120px">{{name}}</span>
         </div>
     </el-card> 
 </template>
 
 <script>
-import teamTag0 from '../assets/team/teamTag0.png'
-import teamTag1 from '../assets/team/teamTag1.png'
-import teamTag2 from '../assets/team/teamTag2.png'
 export default {
-    name: 'TeamCard',
+    name: 'AverageCard',
 
     data() {
         return {
@@ -31,32 +21,7 @@ export default {
         }
     },
 
-    props:['team'],
-
-    computed: {
-        teamTag(){
-            let role = this.checkJob(this.$store.state.loginOptions.userInfo.userId, this.team.groupId)
-            if( role === 'founder')
-                return teamTag0;
-            else if(role === 'admin')
-                return teamTag1;
-            else if(role === 'member')
-                return teamTag2;
-            else
-                return '';
-            // 错误怎么处理？
-        }
-    },
-
-    methods: {
-        // 获取成员在该组职位
-        checkJob(userId, groupId){
-            console.log(this.$store.state.loginOptions.userInfo.userId)
-            this.$api.team.checkJob(userId, groupId).then((res) => {
-            return res.data.data
-            })
-        }
-    },
+    props:['name'],
 }
 </script>
 

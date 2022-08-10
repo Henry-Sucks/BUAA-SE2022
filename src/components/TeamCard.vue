@@ -28,35 +28,39 @@ export default {
     data() {
         return {
             teamAvatar: 'https://us.123rf.com/450wm/kaisorn/kaisorn1507/kaisorn150700059/43462346-office-workplace-flat-design.jpg',
+            teamTag: ''
         }
     },
 
     props:['team'],
 
-    computed: {
-        teamTag(){
-            let role = this.checkJob(this.$store.state.loginOptions.userInfo.userId, this.team.groupId)
-            if( role === 'founder')
-                return teamTag0;
-            else if(role === 'admin')
-                return teamTag1;
-            else if(role === 'member')
-                return teamTag2;
-            else
-                return '';
-            // 错误怎么处理？
-        }
+
+
+    mounted(){
+        this.getTeamTag()
     },
 
     methods: {
-        // 获取成员在该组职位
-        checkJob(userId, groupId){
-            console.log(this.$store.state.loginOptions.userInfo.userId)
-            this.$api.team.checkJob(userId, groupId).then((res) => {
-            return res.data.data
-            })
+    async getTeamTag(){
+        let role = await this.$api.team.checkJob(this.$store.state.loginOptions.userInfo.userId, this.team.groupId)
+        console.log('查看结果', role.data.data)
+        let res = role.data.data
+        if( role.data.data === 'founder'){
+            this.teamTag = teamTag0;
         }
-    },
+        else if(role.data.data === 'admin')
+            this.teamTag = teamTag1;
+        else if(role.data.data === 'member')
+            this.teamTag = teamTag2;
+        else
+            this.teamTag = '';
+
+
+        // 错误怎么处理？
+    }
+},
+
+    
 }
 </script>
 

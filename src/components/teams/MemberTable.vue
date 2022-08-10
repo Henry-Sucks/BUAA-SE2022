@@ -1,12 +1,12 @@
 <template>
     <el-row class="header">
         <el-button 
-        color="#1F80B0" :icon="Plus" round @click="addUserToGroup"
+        color="#1F80B0" :icon="Plus" round @click="addVisible = true"
         >
         邀请用户
         </el-button>
         <el-button 
-        type="danger" :icon="Delete" round @click="dialogVisible = true"
+        type="danger" :icon="Delete" round @click="deleteVisible = true"
         >
         解散团队
         </el-button>
@@ -16,7 +16,8 @@
             <template #default="scope">
                 <!-- <span class="text">{{getUserName(scope.row.userId)}}</span> -->
                 <span class="text">{{scope.row.userName}}</span>
-                <img class="pic" :src="getRoleTag(checkJob(scope.row.userId, tid))" style="width:50px; ">
+                <span class="text" v-if="scope.row.userId == uid">（您）</span>
+                <img class="pic" :src="getRoleTag(scope.row.userId, tid)" style="width:50px; ">
             </template>
         </el-table-column>
         <el-table-column label="成员邮箱">
@@ -26,13 +27,13 @@
         </el-table-column>
         <el-table-column label="操作">
             <template #default="scope">
-                <el-button size="default" type="success" round v-if="getRoleTag(checkJob(scope.row.userId, tid)) !== 'member'  && getRoleTag(checkJob(scope.row.userId, tid)) === 'member'"
+                <el-button size="default" type="success" round v-if="selfRole !== 'member' && tempRole === 'member'"
                 >任命管理员
                 </el-button>
-                <el-button size="default" type="warning" round v-if="getRoleTag(checkJob(scope.row.userId, tid)) === 'founder'  && getRoleTag(checkJob(scope.row.userId, tid)) === 'admin'"
+                <el-button size="default" type="warning" round v-if="selfRole === 'founder' && tempRole === 'admin'"
                 >解除管理员
                 </el-button>
-                <el-button size="default" type="danger" round v-if="getRoleTag(checkJob(scope.row.userId, tid)) !== 'member'  && getRoleTag(checkJob(scope.row.userId, tid)) === 'member'"
+                <el-button size="default" type="danger" round v-if="selfRole === 'founder' && tempRole !== 'founder'"
                 >移出团队
                 </el-button>
             </template>
@@ -84,25 +85,19 @@ import {reactive, getCurrentInstance, onMounted, ref} from 'vue'
 import {useRouter} from 'vue-router'
 import {IMember} from '../../store/interface'
 import {ElMessage} from 'element-plus'
+import {useStore} from 'vuex'
 
 const {proxy} = getCurrentInstance()
 const router = useRouter() 
+const store = useStore()
 
 let deleteVisible = ref(false)
 let addVisible = ref(false)
 
 let addInput = ref('')
 
-function getRoleTag(role: String){
-    if(role === 'founder')
-        return require('../../assets/team/teamTag0.png')
-    else if(role === 'admin')
-        return require('../../assets/team/teamTag1.png')
-    else if(role === 'member')
-        return require('../../assets/team/teamTag2.png')
-    else
-        return null
-}
+// 该登录用户的id
+const uid = store.state.loginOptions.userInfo.userId
 
 const props = defineProps({
     tid: Number 
@@ -137,11 +132,36 @@ destinationArray.push(...sourceArray)
 }
 
 // 得到成员信息
-function checkJob(userId: number, groupId: number){
-    proxy.$api.team.checkJob(userId, groupId).then((res) => {
-        return res.data.data
-    })
+// 注意：vue有一个特性，template中要展现的数据不能来自一个异步函数，比如axios。因此想要使用它得像checkJob中，先使用async和await关键词(可以看B站)，在给一个临时变量性质的全局变量去赋值，最后取那个全员变量的值就可以了
+// 记录成员信息的临时变量
+let tempRole = ref('')
+let selfRole = ref('')
+async function checkJob(userId: number, groupId: number){
+    let res = await proxy.$api.team.checkJob(userId, groupId)
+    tempRole.value = res.data.data
+    if(userId == store.state.loginOptions.userInfo.userId)
+        selfRole.value = res.data.data
 }
+
+// 通过成员信息得到teamTag
+function getRoleTag(userId: number, groupId: number){
+    console.log('getRoleTag', userId, groupId)
+    checkJob(userId, groupId)
+    if(tempRole.value === 'founder')
+        return require('../../assets/team/teamTag0.png')
+    else if(tempRole.value === 'admin')
+        return require('../../assets/team/teamTag1.png')
+    else if(tempRole.value === 'member')
+        return require('../../assets/team/teamTag2.png')
+    else
+        return null
+}
+
+// function getRole(userId: number, groupId: number){
+//     console.log('getRole', userId, groupId)
+//     checkJob(userId, groupId)
+//     return tempRole.value
+// }
 
 // 删除团队
 function deleteGroup(){
